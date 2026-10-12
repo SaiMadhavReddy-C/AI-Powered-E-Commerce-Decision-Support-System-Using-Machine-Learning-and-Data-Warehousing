@@ -1,0 +1,79 @@
+.alerts-page-container {
+  max-width: var(--max-width, 720px);
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+.alerts-header {
+  margin-bottom: 32px;
+}
+
+.alerts-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.alerts-header .subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alert-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  transition: border-color var(--transition-fast);
+}
+
+.alert-card.unread {
+  border-left: 4px solid var(--accent);
+}
+
+.alert-card.read {
+  opacity: 0.75;
+}
+
+.alert-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.alert-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.alert-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.alert-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .alerts-page-container {
+    padding: 20px 16px calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .alerts-header h1 {
+    font-size: 24px;
+  }
+}

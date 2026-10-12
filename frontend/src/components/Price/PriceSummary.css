@@ -1,0 +1,70 @@
+.price-summary {
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.price-summary-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.price-summary-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+
+.price-summary-current {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-summary-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.price-summary-val {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.trend-badge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.trend-good {
+  background-color: var(--positive-light);
+  color: var(--positive);
+}
+
+.trend-bad {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.price-summary-low {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.view-history-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.view-history-link:hover {
+  text-decoration: underline;
+}

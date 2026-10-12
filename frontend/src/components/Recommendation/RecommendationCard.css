@@ -1,0 +1,124 @@
+.recommendation-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.rec-type-wait .rec-label { color: var(--warning); }
+.rec-type-buy .rec-label { color: var(--positive); }
+.rec-type-change .rec-label { color: var(--warning); }
+.rec-type-uncertain .rec-label { color: var(--neutral); }
+
+.rec-badge-section {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.rec-emoji {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.rec-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rec-timestamp {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.rec-content {
+  text-align: center;
+}
+
+.rec-message {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+.rec-explanation {
+  font-size: 16px;
+  color: var(--text);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.rec-confidence {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 24px 0;
+}
+
+.rec-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.rec-wait-action p {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.btn-secondary {
+  padding: 12px 20px;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg);
+  border-color: var(--text-secondary);
+}
+
+.btn-primary {
+  padding: 14px 24px;
+  background-color: var(--accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+@media (max-width: 640px) {
+  .recommendation-card {
+    padding: 24px 16px;
+    gap: 16px;
+  }
+  
+  .rec-message {
+    font-size: 20px;
+  }
+}

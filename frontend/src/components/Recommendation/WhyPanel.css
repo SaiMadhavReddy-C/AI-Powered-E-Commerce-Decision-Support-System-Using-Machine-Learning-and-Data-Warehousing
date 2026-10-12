@@ -1,0 +1,62 @@
+.why-panel {
+  margin-bottom: 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.why-toggle {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.why-toggle:hover {
+  text-decoration: underline;
+}
+
+.why-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.why-content {
+  margin-top: 16px;
+  padding: 20px;
+  background-color: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.why-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.why-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.why-icon {
+  color: var(--positive);
+  font-weight: bold;
+}
+
+.why-text {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.4;
+}

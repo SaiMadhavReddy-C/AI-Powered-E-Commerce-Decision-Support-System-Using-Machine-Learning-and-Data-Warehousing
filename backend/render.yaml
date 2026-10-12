@@ -1,0 +1,42 @@
+# ==============================================================================
+# ShopQ Backend - Render Blueprint Deployment Configuration
+# Standalone Backend Service (when backend folder is root or deployed independently)
+# ==============================================================================
+
+services:
+  - type: web
+    name: shopq-backend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: "10000"
+      - key: PROJECT_NAME
+        value: "ShopQ Backend API"
+      - key: VERSION
+        value: "1.0.0"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        sync: false # e.g. https://shopq.vercel.app
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: RATE_LIMIT_ANALYZE_RPM
+        value: "30"
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "60"
+      - key: SSRF_TIMEOUT_SECONDS
+        value: "5.0"
+      - key: LOG_LEVEL
+        value: INFO

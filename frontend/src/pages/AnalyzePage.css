@@ -1,0 +1,99 @@
+.analyze-page-container {
+  max-width: var(--max-width, 720px);
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+}
+
+.analyze-section {
+  margin-top: 32px;
+}
+
+.analyze-action-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.analyze-action-section .watch-button-container {
+  align-items: center;
+  margin: 0;
+  width: 100%;
+}
+
+.analyze-action-section .watch-btn {
+  min-width: 220px;
+  text-align: center;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+.see-how-decided-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 40px;
+}
+
+.see-how-decided-btn {
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.details-link-wrapper {
+  text-align: center;
+}
+
+.details-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.details-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+@media (max-width: 640px) {
+  .analyze-page-container {
+    padding: 16px 16px calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .analyze-section {
+    margin-top: 24px;
+  }
+  
+  .divider {
+    margin: 28px 0;
+  }
+  
+  .see-how-decided-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

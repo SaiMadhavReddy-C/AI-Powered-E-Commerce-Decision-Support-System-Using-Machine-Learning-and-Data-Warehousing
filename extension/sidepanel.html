@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopQ - Shopping Advisor</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sidepanel-root">
+    <!-- Top Header Bar -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-emblem">Q</div>
+        <div class="brand-text">
+          <h1 class="brand-title">ShopQ</h1>
+          <p class="brand-tagline">A friend who checks before you buy</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="refreshBtn" class="icon-btn" title="Refresh analysis" aria-label="Refresh analysis">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+        </button>
+        <button id="settingsToggleBtn" class="icon-btn" title="Extension Settings" aria-label="Extension Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Collapsible Settings Panel -->
+    <div id="settingsPanel" class="settings-panel hidden">
+      <div class="settings-title">Extension Settings</div>
+      <div class="form-group">
+        <label for="backendUrlInput" class="form-label">Backend API URL</label>
+        <input type="text" id="backendUrlInput" class="form-input" placeholder="http://localhost:8000">
+      </div>
+      <div class="form-group">
+        <label for="webAppUrlInput" class="form-label">ShopQ Web App URL</label>
+        <input type="text" id="webAppUrlInput" class="form-input" placeholder="http://localhost:5173">
+      </div>
+      <div class="settings-actions">
+        <button id="saveSettingsBtn" class="btn btn-primary btn-sm">Save Settings</button>
+        <button id="cancelSettingsBtn" class="btn btn-secondary btn-sm">Close</button>
+      </div>
+    </div>
+
+    <!-- Active Product Page Context Bar -->
+    <div id="contextBar" class="context-bar hidden">
+      <div class="context-badge" id="contextRetailerBadge">Amazon</div>
+      <div class="context-title" id="contextTitle">Detected Product</div>
+    </div>
+
+    <!-- Main Dynamic Content Views -->
+    <main class="main-content">
+      
+      <!-- VIEW 1: Idle / Manual Input (When no supported PDP active or tab blank) -->
+      <section id="idleView" class="view">
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h2 class="empty-heading">Check before you buy</h2>
+          <p class="empty-text">
+            Navigate to any product on <strong>Amazon, Flipkart, Croma, Reliance Digital, or Myntra</strong>, or paste a product link below:
+          </p>
+
+          <form id="manualUrlForm" class="manual-form">
+            <input 
+              type="text" 
+              id="manualUrlInput" 
+              class="form-input" 
+              placeholder="Paste product URL or item name..." 
+              autocomplete="off"
+            >
+            <button type="submit" class="btn btn-primary btn-block">Analyze with ShopQ</button>
+          </form>
+
+          <div class="sample-section">
+            <span class="sample-label">Or test with verified items:</span>
+            <div class="sample-chips">
+              <button class="sample-chip" data-query="sony_wh1000xm5">Sony WH-1000XM5</button>
+              <button class="sample-chip" data-query="iphone_15_128">iPhone 15 128GB</button>
+              <button class="sample-chip" data-query="macbook_air_m2">MacBook Air M2</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: Thinking / Analyzing Screen -->
+      <section id="thinkingView" class="view hidden">
+        <div class="thinking-card">
+          <div class="spinner-container">
+            <div class="shopq-spinner"></div>
+          </div>
+          <h2 class="thinking-title">Evaluating purchase advice</h2>
+          <p class="thinking-subtitle">Verifying seller credibility & pricing signals</p>
+
+          <div class="steps-list">
+            <div class="step-item" id="step1">
+              <span class="step-icon">⏳</span>
+              <span class="step-label">Checking seller credentials & ratings</span>
+            </div>
+            <div class="step-item" id="step2">
+              <span class="step-icon">⏳</span>
+              <span class="step-label">Comparing deals across 5 retailers</span>
+            </div>
+            <div class="step-item" id="step3">
+              <span class="step-icon">⏳</span>
+              <span class="step-label">Analyzing 90-day price trend & timing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: Result / Recommendation Card -->
+      <section id="resultView" class="view hidden">
+        <!-- Product Header Card -->
+        <div class="card product-card">
+          <div class="product-top">
+            <div class="product-info">
+              <span class="product-brand" id="resultBrand">Sony</span>
+              <h2 class="product-name" id="resultName">Sony WH-1000XM5</h2>
+            </div>
+            <div class="product-price-box">
+              <span class="price-current" id="resultCurrentPrice">₹23,499</span>
+              <span class="price-retailer" id="resultRetailer">Amazon</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommendation Verdict Card -->
+        <div class="card verdict-card" id="verdictCard">
+          <div class="verdict-header">
+            <div class="verdict-badge" id="verdictBadge">
+              <span class="verdict-emoji" id="verdictEmoji">⏳</span>
+              <span class="verdict-text" id="verdictLabel">WAIT A LITTLE</span>
+            </div>
+            <div class="confidence-badge" id="confidenceBadge">
+              <span>Pretty confident</span>
+            </div>
+          </div>
+
+          <div class="verdict-body">
+            <h3 class="humanized-headline" id="verdictHeadline">I'd hold off for now.</h3>
+            <p class="primary-reason" id="primaryReason">
+              Price is above recent sale levels and trending downwards.
+            </p>
+
+            <ul class="secondary-reasons" id="secondaryReasonsList">
+              <!-- Dynamically populated -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Buy Point Target Card -->
+        <div class="card buy-point-card" id="buyPointCard">
+          <div class="buy-point-header">
+            <div class="buy-point-label">Target Buy Point</div>
+            <div class="buy-point-price" id="buyPointPrice">₹22,999</div>
+          </div>
+          <p class="buy-point-advice" id="buyPointAdvice">
+            I'd reconsider around ₹22,999.
+          </p>
+          <button id="watchBtn" class="btn btn-secondary btn-block">
+            <span id="watchBtnIcon">🔔</span>
+            <span id="watchBtnText">Watch this item in ShopQ</span>
+          </button>
+        </div>
+
+        <!-- Best Option / Competitor Card (if available) -->
+        <div class="card best-offer-card hidden" id="bestOfferCard">
+          <div class="best-offer-badge">BETTER OPTION FOUND</div>
+          <div class="best-offer-content">
+            <div class="best-offer-details">
+              <div class="best-offer-retailer" id="bestOfferRetailer">Flipkart</div>
+              <div class="best-offer-price" id="bestOfferPrice">₹22,499</div>
+              <div class="best-offer-meta" id="bestOfferMeta">🛡️ Verified seller Appario Retail</div>
+            </div>
+            <a href="#" id="bestOfferLink" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
+              View Deal →
+            </a>
+          </div>
+        </div>
+
+        <!-- Seller Reliability Check -->
+        <div class="card seller-check-card" id="sellerCheckCard">
+          <div class="seller-check-row">
+            <div class="seller-stat">
+              <span class="seller-stat-label">Seller Status</span>
+              <span class="seller-stat-value text-positive" id="sellerStatus">🛡️ Verified</span>
+            </div>
+            <div class="seller-stat">
+              <span class="seller-stat-label">Return Policy</span>
+              <span class="seller-stat-value" id="sellerReturn">7-day replacement</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA: Open in ShopQ Web App -->
+        <div class="web-app-cta-container">
+          <a href="#" id="openWebAppBtn" class="btn btn-primary btn-block cta-btn" target="_blank" rel="noopener noreferrer">
+            Open in ShopQ Web App ↗
+          </a>
+          <p class="cta-subtext">View full 3-level price breakdown, interactive charts, and deal history.</p>
+        </div>
+      </section>
+
+      <!-- VIEW 4: Error State -->
+      <section id="errorView" class="view hidden">
+        <div class="error-card">
+          <div class="error-icon">⚠️</div>
+          <h2 class="error-heading">Couldn't complete analysis</h2>
+          <p class="error-message" id="errorMessage">
+            Could not connect to ShopQ backend service at http://localhost:8000.
+          </p>
+          <div class="error-actions">
+            <button id="retryBtn" class="btn btn-primary">Try Again</button>
+            <button id="errorSettingsBtn" class="btn btn-secondary">Check Settings</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Persistent Light Footer -->
+    <footer class="footer">
+      <div class="footer-note">
+        <span class="privacy-lock">🔒</span> Privacy-first: Evaluated only when requested
+      </div>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

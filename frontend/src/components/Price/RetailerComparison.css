@@ -1,0 +1,115 @@
+.retailer-comparison {
+  margin: 32px 0;
+}
+
+.retailer-comparison-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.retailer-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--bg-card);
+}
+
+.retailer-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.retailer-table th, .retailer-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.retailer-table th {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg);
+}
+
+.retailer-table tr:last-child td {
+  border-bottom: none;
+}
+
+.best-price-row {
+  background-color: var(--positive-light);
+}
+
+.retailer-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.retailer-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-secondary);
+}
+
+.best-price-row .retailer-dot {
+  background-color: var(--positive);
+}
+
+.price-cell {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.seller-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.seller-name {
+  font-size: 14px;
+}
+
+.reliability-badge {
+  font-size: 12px;
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: max-content;
+}
+
+.rel-good {
+  background-color: rgba(45, 138, 86, 0.1);
+  color: var(--positive);
+}
+
+.rel-warn {
+  background-color: rgba(196, 138, 26, 0.1);
+  color: var(--warning);
+}
+
+.view-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.view-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .retailer-table th, .retailer-table td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+  
+  .price-cell {
+    font-size: 14px;
+  }
+}

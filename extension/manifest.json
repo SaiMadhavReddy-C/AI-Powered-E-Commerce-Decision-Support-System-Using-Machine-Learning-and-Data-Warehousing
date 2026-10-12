@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "ShopQ - A friend who checks before you buy",
+  "short_name": "ShopQ",
+  "version": "1.0.0",
+  "description": "Smart pre-purchase shopping advisor for Amazon, Flipkart, Croma, Reliance Digital, and Myntra. Privacy-first, zero background telemetry.",
+  "permissions": [
+    "activeTab",
+    "sidePanel",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.amazon.in/*",
+    "*://*.flipkart.com/*",
+    "*://*.croma.com/*",
+    "*://*.reliancedigital.in/*",
+    "*://*.tatacliq.com/*",
+    "*://*.myntra.com/*",
+    "*://*.ajio.com/*",
+    "*://*.meesho.com/*",
+    "*://*.jiomart.com/*",
+    "*://*.nykaa.com/*"
+  ],
+  "action": {
+    "default_title": "ShopQ - Check Before You Buy"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.amazon.in/*",
+        "*://*.flipkart.com/*",
+        "*://*.croma.com/*",
+        "*://*.reliancedigital.in/*",
+        "*://*.tatacliq.com/*",
+        "*://*.myntra.com/*",
+        "*://*.ajio.com/*",
+        "*://*.meesho.com/*",
+        "*://*.jiomart.com/*",
+        "*://*.nykaa.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

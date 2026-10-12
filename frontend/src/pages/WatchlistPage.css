@@ -1,0 +1,57 @@
+.watchlist-page-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+.watchlist-header {
+  margin-bottom: 32px;
+}
+
+.watchlist-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.watchlist-header .subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.watchlist-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.empty-state-wrapper {
+  margin-top: 48px;
+}
+
+@media (min-width: 768px) {
+  .watchlist-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .watchlist-page-container {
+    padding: 20px 16px calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .watchlist-header h1 {
+    font-size: 24px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}

@@ -1,0 +1,39 @@
+# Ignore entire frontend during backend Docker builds
+frontend/
+node_modules/
+dist/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Environment files & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE & Git
+.git/
+.gitignore
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Documentation
+*.md

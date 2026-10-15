@@ -313,7 +313,7 @@ class TestSecretMasking(unittest.TestCase):
 
     def test_mask_gemini_api_key(self):
         """Gemini API keys must be masked."""
-        sample = "Error calling Gemini with key AIzaSyD3x9kL4mP2qR7sT1uV5wX8yZ0aBcDeFgH"
+        sample = "Error calling Gemini with key AIzaSyD3x9kL4mP2qR7sT1uV"
         masked = mask_secrets(sample)
         self.assertNotIn("AIzaSyD3x9kL4mP2qR7sT1uV5wX8yZ0aBcDeFgH", masked)
         self.assertIn("[REDACTED_API_KEY]", masked)

@@ -9,6 +9,7 @@ from app.core.logging import logger
 
 from app.services.decision.synthesizer import decision_synthesizer
 
+
 class DecisionService:
     """Evaluates product metrics, seller credentials, and pricing signals via ML & Decision Engine."""
 
@@ -17,18 +18,40 @@ class DecisionService:
         self.rules_version = settings.DECISION_RULES_VERSION
 
     def evaluate_decision(self, product: ProductDetailSchema) -> DecisionSchema:
-        """Constructs the strict DecisionSchema object for a given product utilizing live ML and safety gates."""
+        """Constructs the strict DecisionSchema object utilizing live ML and safety gates."""
         return decision_synthesizer.synthesize(product)
 
     def analyze_product(self, product_or_query: str) -> ProductAnalysisResponse:
         """
         Main entry point for product analysis.
-        Accepts ID, URL, or search query, resolves the product, and returns the strict contract.
+        Resolution order:
+          1. Seeded catalog lookup by ID / alias
+          2. URL / keyword heuristic resolver
+          3. Gemini AI live resolution (for new queries not in catalog)
         """
-        product = product_service.get_by_id(product_or_query)
+        query = (product_or_query or "").strip()
+
+        # Step 1: Direct catalog lookup
+        product = product_service.get_by_id(query)
+
+        # Step 2: URL / heuristic resolution
+        if not product and (
+            query.startswith("http://")
+            or query.startswith("https://")
+            or ".com" in query
+            or ".in" in query
+        ):
+            product = product_service.resolve_by_url(query)
+
+        # Step 3: Full resolution including Gemini AI for keyword searches
         if not product:
-            # Fall back to URL resolution or default demo item
-            product = product_service.resolve_by_url(product_or_query)
+            logger.info(f"Catalog miss — escalating to resolve_new_product: '{query[:50]}'")
+            product = product_service.resolve_new_product(query)
+
+        # Ultimate fallback — return first seeded demo product
+        if not product:
+            logger.warning(f"All resolution paths failed for '{query[:50]}' — using demo fallback")
+            product = product_service.get_all()[0]
 
         decision = self.evaluate_decision(product)
 

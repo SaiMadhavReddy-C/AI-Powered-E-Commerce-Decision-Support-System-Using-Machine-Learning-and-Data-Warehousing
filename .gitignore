@@ -19,11 +19,12 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Environment files (keep .env.example)
+# Environment files (keep .env.example and .env.production)
 .env
 .env.local
 *.local
 !*.example
+!.env.production
 
 # System & OS
 .DS_Store

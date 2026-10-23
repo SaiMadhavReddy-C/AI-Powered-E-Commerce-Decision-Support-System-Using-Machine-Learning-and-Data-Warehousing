@@ -32,9 +32,11 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_ORIGINS
-        sync: false # Set in Render Dashboard: e.g. https://shopq.vercel.app
+        sync: false   # Set in Render Dashboard: e.g. https://shopq.vercel.app
       - key: GEMINI_API_KEY
-        sync: false # Set in Render Dashboard with your secret Gemini API key
+        sync: false   # REQUIRED: Set in Render Dashboard → Environment Variables
+      - key: SCRAPERAPI_KEY
+        sync: false   # OPTIONAL: Set if you have a ScraperAPI key
       - key: RATE_LIMIT_ANALYZE_RPM
         value: "30"
       - key: RATE_LIMIT_WINDOW_SECONDS

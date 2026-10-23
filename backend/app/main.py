@@ -45,10 +45,12 @@ def create_application() -> FastAPI:
     if HAS_SECURITY_MIDDLEWARE:
         setup_security_middlewares(app, settings.CORS_ORIGINS)
     else:
+        # Allow all origins for demo & development; tighten in production via ALLOWED_ORIGINS env var
+        cors_origins = settings.CORS_ORIGINS if settings.IS_PRODUCTION else ["*"]
         app.add_middleware(
             CORSMiddleware,
-            allow_origins=settings.CORS_ORIGINS,
-            allow_credentials=True,
+            allow_origins=cors_origins,
+            allow_credentials=False if cors_origins == ["*"] else True,
             allow_methods=["*"],
             allow_headers=["*"],
         )

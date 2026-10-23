@@ -48,10 +48,15 @@ class SecuritySettings:
                 if origin.strip()
             ]
         else:
+            # Development defaults + Vercel wildcard preview domains
             self.ALLOWED_ORIGINS: List[str] = [
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "http://localhost:3000",
+                "http://localhost:4173",
+                # Vercel production & preview deployments
+                "https://shopq.vercel.app",
+                "https://ai-powered-e-commerce-decision-support-system-using-machine-learning-and-data-warehousing.vercel.app",
             ]
         self.CORS_ORIGINS: List[str] = self.ALLOWED_ORIGINS
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PageContainer from '../components/Layout/PageContainer';
-import { sendTestEmail } from '../services/api';
+import { sendTestEmail, subscribeEmailAlerts } from '../services/api';
+import { updatePreferences } from '../services/api';
 
 const STORAGE_KEY = 'shopq_user_preferences';
 
@@ -59,13 +60,23 @@ export default function PreferencesPage() {
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e?.preventDefault();
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
       }
-      setSaveStatus('Preferences saved successfully!');
+      await updatePreferences(preferences);
+      let emailMessage = '';
+      if (preferences.notificationChannel === 'email' && preferences.email) {
+        try {
+          await subscribeEmailAlerts(preferences.email);
+          emailMessage = ' Subscription confirmation sent.';
+        } catch (emailError) {
+          emailMessage = ` Email could not be sent: ${emailError.message}`;
+        }
+      }
+      setSaveStatus(`Preferences saved successfully!${emailMessage}`);
       const returnTo = location.state?.returnTo;
       if (returnTo) {
         setTimeout(() => navigate(returnTo, { replace: true }), 350);

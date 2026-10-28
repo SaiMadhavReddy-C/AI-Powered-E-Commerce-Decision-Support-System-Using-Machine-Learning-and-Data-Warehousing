@@ -18,3 +18,25 @@ def send_test_email(payload: TestEmailRequest = Body(...)):
         return {"success": True, "id": result.get("id"), "status": result.get("status")}
     except RuntimeError as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
+
+
+@router.post("/subscribe-email")
+def subscribe_email_alerts(payload: TestEmailRequest = Body(...)):
+    try:
+        result = email_service.send(
+            recipient=payload.recipient,
+            subject="You’re subscribed to ShopQ email alerts",
+            html=(
+                "<h2>ShopQ email alerts are enabled</h2>"
+                "<p>We’ll notify you about price drops, seller-risk changes, and important sale signals "
+                "for products in your watchlist.</p>"
+                "<p>You can change these preferences anytime from ShopQ.</p>"
+            ),
+            text=(
+                "ShopQ email alerts are enabled. We’ll notify you about price drops, seller-risk changes, "
+                "and important sale signals for products in your watchlist."
+            ),
+        )
+        return {"success": True, "id": result.get("id"), "status": result.get("status")}
+    except RuntimeError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error

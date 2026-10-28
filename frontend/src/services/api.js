@@ -270,6 +270,19 @@ export async function fetchWatchlist() {
   return [];
 }
 
+export async function updatePreferences(preferences) {
+  const res = await fetch(`${API_BASE_URL}/api/preferences`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(preferences),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail || `Preferences update failed (${res.status})`);
+  }
+  return res.json();
+}
+
 export async function addToWatchlist(productId, targetPrice) {
   try {
     const res = await fetch(`${API_BASE_URL}/api/watchlist`, {
@@ -313,6 +326,19 @@ export async function sendTestEmail(recipient) {
   if (!res.ok) {
     const detail = await res.text();
     throw new Error(detail || `Test email failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function subscribeEmailAlerts(recipient) {
+  const res = await fetch(`${API_BASE_URL}/api/notifications/subscribe-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipient }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail || `Email subscription failed (${res.status})`);
   }
   return res.json();
 }

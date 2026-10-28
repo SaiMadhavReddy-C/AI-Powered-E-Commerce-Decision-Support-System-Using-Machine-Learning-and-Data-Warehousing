@@ -12,6 +12,7 @@ from app.schemas.product import (
 from app.schemas.offer import BestOfferSchema, CompetitorOfferSchema, SellerSchema
 from app.core.logging import logger
 from app.providers.ingestion.trigger_handler import trigger_handler
+from app.providers.registry import provider_registry
 
 def generate_price_history(
     start_price: float,
@@ -932,6 +933,16 @@ class ProductService:
             logger.info("No verified live offer available for requested URL")
             return None
 
+        alternatives = []
+        try:
+            alternatives = [
+                candidate.to_competitor_offer()
+                for candidate in provider_registry.search(offer.product_title, limit=3)
+                if candidate.product_url.rstrip("/") != offer.product_url.rstrip("/")
+            ]
+        except Exception as error:
+            logger.info(f"Alternative retailer lookup skipped: {error}")
+
         product = offer.to_product_detail(
             explanation=(
                 "Showing the last verified retailer observation because a fresh check is unavailable."
@@ -939,12 +950,15 @@ class ProductService:
                 else "Price extracted from the retailer listing."
             ),
             reasons=[
+                f"Found {len(alternatives)} verified retailer alternative(s)."
+                if alternatives else "No matching retailer alternative could be verified yet.",
                 "This is a previously verified price; check time is shown above."
                 if offer.source_status == "STALE"
                 else "Price was checked directly on the retailer listing."
             ],
             confidence="MEDIUM",
             data_status=offer.source_status,
+            competitors=alternatives,
         )
         self._products[product.id] = product
         return product

@@ -180,6 +180,7 @@ class FirecrawlProvider(BaseProvider):
             return []
 
         offers = []
+        query_tokens = [token for token in re.split(r"[^a-z0-9]+", query.lower()) if len(token) >= 3]
         seen_urls = set()
         for domain in ("amazon.in", "flipkart.com", "croma.com"):
             payload = {
@@ -212,7 +213,8 @@ class FirecrawlProvider(BaseProvider):
                     continue
                 seen_urls.add(url)
                 offer = self.fetch_and_extract(url)
-                if offer:
+                title = (offer.product_title.lower() if offer else "")
+                if offer and (not query_tokens or any(token in title for token in query_tokens)):
                     offers.append(offer)
                 if len(offers) >= limit:
                     return offers

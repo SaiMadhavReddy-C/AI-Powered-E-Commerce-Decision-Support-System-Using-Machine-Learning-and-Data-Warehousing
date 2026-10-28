@@ -12,6 +12,7 @@ Central management registry for all retailer adapters and data acquisition provi
 Statuses: LIVE, PARTIAL, MOCK, UNAVAILABLE.
 """
 
+import re
 from typing import Dict, Optional, List, Any
 from urllib.parse import urlparse
 
@@ -120,7 +121,7 @@ class ProviderRegistry:
         if self.firecrawl_provider.status == ProviderStatus.LIVE:
             try:
                 live_offer = self.firecrawl_provider.fetch_and_extract(url)
-                if live_offer and self._is_product_offer(live_offer):
+                if live_offer and self._is_product_offer(live_offer, url):
                     return live_offer
                 logger.info(f"Firecrawl returned no verified offer for {url}; trying ScraperAPI.")
             except Exception as error:
@@ -129,7 +130,7 @@ class ProviderRegistry:
         if self.scraperapi_provider.status == ProviderStatus.LIVE:
             try:
                 live_offer = self.scraperapi_provider.fetch_and_extract(url)
-                if live_offer and self._is_product_offer(live_offer):
+                if live_offer and self._is_product_offer(live_offer, url):
                     return live_offer
                 logger.info(f"Live fetch returned empty/invalid data for {url}; cascading to MockProvider fallback.")
             except Exception as e:
@@ -139,12 +140,24 @@ class ProviderRegistry:
         return self._fetch_from_mock(url, reason="LIVE_UNAVAILABLE_OR_FALLBACK")
 
     @staticmethod
-    def _is_product_offer(offer: ProviderOffer) -> bool:
+    def _is_product_offer(offer: ProviderOffer, url: str = "") -> bool:
         """Reject category/search pages that expose a plausible but unrelated price."""
         title = (offer.product_title or "").lower()
-        return not any(marker in title for marker in (
-            "search results", "results for", "deals under", "shop by category",
-        ))
+        if any(marker in title for marker in (
+            "search results", "results for", "deals under", "under ₹", "under rs", "shop by category",
+        )):
+            return False
+
+        # Amazon often returns a category card while scraping a product URL.
+        # If the URL contains a product slug, require at least one meaningful
+        # slug token in the extracted title before accepting its price.
+        parsed = urlparse(url)
+        if parsed.hostname and parsed.hostname.endswith("amazon.in") and "/dp/" in parsed.path.lower():
+            slug = parsed.path.lower().split("/dp/", 1)[0]
+            tokens = [token for token in re.split(r"[^a-z0-9]+", slug) if len(token) >= 4]
+            if tokens and not any(token in title for token in tokens):
+                return False
+        return True
 
     def _fetch_from_mock(self, url: str, reason: str = "FALLBACK") -> ProviderOffer:
         """Resolves offer from MockProvider with fallback telemetry."""

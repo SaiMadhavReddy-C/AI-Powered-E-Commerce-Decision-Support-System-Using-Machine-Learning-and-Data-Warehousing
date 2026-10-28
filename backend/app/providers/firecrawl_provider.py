@@ -73,7 +73,7 @@ class FirecrawlProvider(BaseProvider):
         """Reject search/category titles that can contain an unrelated price."""
         lowered = title.lower()
         return not any(marker in lowered for marker in (
-            "search results", "results for", "deals under", "shop by category",
+            "search results", "results for", "deals under", "under ₹", "under rs", "shop by category",
         ))
 
     def fetch_and_extract(self, url: str) -> Optional[ProviderOffer]:

@@ -9,7 +9,9 @@ import {
 } from './mockData.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-const ENABLE_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK === 'true';
+// Demo data is opt-in for local development only. Production must never turn
+// an unavailable live lookup into a different seeded product.
+const ENABLE_MOCK_FALLBACK = import.meta.env.DEV && import.meta.env.VITE_ENABLE_MOCK_FALLBACK === 'true';
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

@@ -2,6 +2,7 @@ import threading
 import datetime
 from typing import List, Optional, Union, Dict
 from app.schemas.alert import AlertSchema
+from app.core.config import settings
 
 class AlertService:
     """Manages price and seller change alerts for tracked products."""
@@ -12,6 +13,8 @@ class AlertService:
         self._init_seed_alerts()
 
     def _init_seed_alerts(self):
+        if settings.IS_PRODUCTION:
+            return
         now = datetime.datetime.now(datetime.timezone.utc)
         a1 = AlertSchema(
             id=1,

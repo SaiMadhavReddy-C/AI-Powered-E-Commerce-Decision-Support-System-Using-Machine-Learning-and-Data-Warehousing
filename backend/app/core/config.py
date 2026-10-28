@@ -28,6 +28,7 @@ class SecuritySettings:
         # Supported retailer domains
         self.ALLOWED_RETAILER_DOMAINS: Set[str] = {
             "amazon.in",
+            "amzn.in",
             "flipkart.com",
             "croma.com",
             "reliancedigital.in",

@@ -32,6 +32,7 @@ class ScraperAPIProvider(BaseProvider):
 
     ALLOWED_RETAILER_DOMAINS = [
         "amazon.in",
+        "amzn.in",
         "flipkart.com",
         "croma.com",
         "reliancedigital.in",

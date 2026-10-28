@@ -18,7 +18,7 @@ class FirecrawlProvider(BaseProvider):
     """Extracts a verified offer from one explicitly supplied retailer URL."""
 
     ALLOWED_RETAILER_DOMAINS = [
-        "amazon.in", "flipkart.com", "croma.com", "reliancedigital.in",
+        "amazon.in", "amzn.in", "flipkart.com", "croma.com", "reliancedigital.in",
         "tatacliq.com", "myntra.com", "ajio.com", "meesho.com", "jiomart.com", "nykaa.com",
     ]
     API_URL = "https://api.firecrawl.dev/v2/scrape"

@@ -15,6 +15,10 @@ const DEFAULT_PREFERENCES = {
   },
   notificationChannel: 'in_app',
   email: '',
+  recommendationMethod: 'balanced',
+  autoScanEnabled: false,
+  autoScanTime: '09:00',
+  autoScanTimezone: 'Asia/Kolkata',
 };
 
 export default function PreferencesPage() {
@@ -127,6 +131,12 @@ export default function PreferencesPage() {
       label: 'Immediate (Need it now)',
       detail: 'Always advise buying unless the seller is untrustworthy or price is gouged.',
     },
+  ];
+
+  const recommendationMethods = [
+    { id: 'balanced', title: 'Balanced (Recommended)', detail: 'Balance price, seller reliability, stock, and timing.' },
+    { id: 'price_first', title: 'Price first', detail: 'Prefer the lowest verified price, even with a longer wait.' },
+    { id: 'seller_first', title: 'Seller safety first', detail: 'Prefer trusted sellers and warranties over small savings.' },
   ];
 
   return (
@@ -295,7 +305,41 @@ export default function PreferencesPage() {
             </div>
           </div>
 
-          {/* Section 3: Notification Preferences */}
+          {/* Section 3: Recommendation method */}
+          <div className="card" style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>3. Recommendation Method</h2>
+              <p className="text-secondary" style={{ fontSize: '14px' }}>Choose how ShopQ weighs price and seller risk.</p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {recommendationMethods.map((item) => (
+                <label key={item.id} style={{ display: 'flex', gap: '12px', padding: '12px 16px', borderRadius: 'var(--radius)', border: preferences.recommendationMethod === item.id ? '2px solid var(--accent)' : '1px solid var(--border)', backgroundColor: preferences.recommendationMethod === item.id ? 'var(--accent-light)' : 'var(--bg-card)', cursor: 'pointer' }}>
+                  <input type="radio" name="recommendationMethod" checked={preferences.recommendationMethod === item.id} onChange={() => setPreferences((p) => ({ ...p, recommendationMethod: item.id }))} style={{ accentColor: 'var(--accent)' }} />
+                  <span><strong>{item.title}</strong><span className="text-secondary" style={{ display: 'block', fontSize: '13px', marginTop: '3px' }}>{item.detail}</span></span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Section 4: Automatic watchlist scan */}
+          <div className="card" style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>4. Automatic Watchlist Scan</h2>
+              <p className="text-secondary" style={{ fontSize: '14px' }}>Set when the watchlist worker should refresh tracked products.</p>
+            </div>
+            <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+              <span><strong>Enable scheduled scans</strong><span className="text-secondary" style={{ display: 'block', fontSize: '13px', marginTop: '3px' }}>The scheduled worker will check live prices and update alerts.</span></span>
+              <input type="checkbox" checked={preferences.autoScanEnabled} onChange={() => setPreferences((p) => ({ ...p, autoScanEnabled: !p.autoScanEnabled }))} style={{ width: '18px', height: '18px', accentColor: 'var(--accent)' }} />
+            </label>
+            {preferences.autoScanEnabled && (
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                <label style={{ flex: '1 1 140px', fontSize: '13px' }}>Daily time<input type="time" value={preferences.autoScanTime} onChange={(e) => setPreferences((p) => ({ ...p, autoScanTime: e.target.value }))} className="input" style={{ display: 'block', marginTop: '6px' }} /></label>
+                <label style={{ flex: '1 1 180px', fontSize: '13px' }}>Timezone<select value={preferences.autoScanTimezone} onChange={(e) => setPreferences((p) => ({ ...p, autoScanTimezone: e.target.value }))} className="input" style={{ display: 'block', marginTop: '6px' }}><option>Asia/Kolkata</option><option>UTC</option><option>America/New_York</option><option>Europe/London</option></select></label>
+              </div>
+            )}
+          </div>
+
+          {/* Section 5: Notification Preferences */}
           <div className="card" style={{ marginBottom: '28px' }}>
             <div style={{ marginBottom: '16px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>3. Notification Settings</h2>

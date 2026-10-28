@@ -7,6 +7,7 @@ import PriceChart from '../components/Price/PriceChart';
 import RetailerComparison from '../components/Price/RetailerComparison';
 import SellerInfo from '../components/Recommendation/SellerInfo';
 import EmptyState from '../components/common/EmptyState';
+import WatchButton from '../components/Watchlist/WatchButton';
 import './DetailsPage.css';
 
 export default function DetailsPage() {
@@ -49,6 +50,11 @@ export default function DetailsPage() {
         
         <div className="details-header-wrapper">
           <ProductHeader product={product} />
+          <WatchButton
+            productId={product.id}
+            targetPrice={product.buyPoint}
+            productName={product.name}
+          />
         </div>
 
         <div className="details-level-section">

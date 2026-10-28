@@ -20,8 +20,6 @@ const ProductHeader = ({ product }) => {
         <div className="product-price-row">
           <span className="product-price">{formatPrice(product.currentPrice)}</span>
           <span className="product-timestamp">{formatTimeAgo(product.lastChecked)}</span>
-          {product.dataStatus === 'STALE' && <span className="product-timestamp">Last verified price</span>}
-          {product.dataStatus === 'CACHED' && <span className="product-timestamp">Verified cache</span>}
           {product.dataStatus === 'SAMPLE' && <span className="product-timestamp">Sample data</span>}
         </div>
       </div>

@@ -16,6 +16,10 @@ class PreferencesSchema(BaseModel):
     notifications: NotificationSettingsSchema = Field(default_factory=NotificationSettingsSchema)
     notification_channel: str = Field(default="in_app", alias="notificationChannel")
     email: Optional[str] = Field(default="")
+    recommendation_method: str = Field(default="balanced", alias="recommendationMethod")
+    auto_scan_enabled: bool = Field(default=False, alias="autoScanEnabled")
+    auto_scan_time: str = Field(default="09:00", alias="autoScanTime")
+    auto_scan_timezone: str = Field(default="Asia/Kolkata", alias="autoScanTimezone")
 
     class Config:
         populate_by_name = True

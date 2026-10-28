@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PageContainer from '../components/Layout/PageContainer';
 
 const STORAGE_KEY = 'shopq_user_preferences';
@@ -23,6 +23,7 @@ const DEFAULT_PREFERENCES = {
 
 export default function PreferencesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [preferences, setPreferences] = useState(() => {
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
@@ -63,7 +64,12 @@ export default function PreferencesPage() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
       }
       setSaveStatus('Preferences saved successfully!');
-      setTimeout(() => setSaveStatus(''), 3000);
+      const returnTo = location.state?.returnTo;
+      if (returnTo) {
+        setTimeout(() => navigate(returnTo, { replace: true }), 350);
+      } else {
+        setTimeout(() => setSaveStatus(''), 3000);
+      }
     } catch (e) {
       console.error('Failed to save preferences:', e);
       setSaveStatus('Error saving preferences.');

@@ -71,6 +71,8 @@ class SecuritySettings:
         # Third-party data provider keys
         self.FIRECRAWL_API_KEY: str = os.getenv("FIRECRAWL_API_KEY", "")
         self.SCRAPERAPI_KEY: str = os.getenv("SCRAPERAPI_KEY", "")
+        self.FIRECRAWL_TIMEOUT_SECONDS: float = float(os.getenv("FIRECRAWL_TIMEOUT_SECONDS", "10"))
+        self.SCRAPERAPI_TIMEOUT_SECONDS: float = float(os.getenv("SCRAPERAPI_TIMEOUT_SECONDS", "10"))
         self.LIVE_PRICE_CACHE_TTL_SECONDS: int = int(
             os.getenv("LIVE_PRICE_CACHE_TTL_SECONDS", "900")
         )

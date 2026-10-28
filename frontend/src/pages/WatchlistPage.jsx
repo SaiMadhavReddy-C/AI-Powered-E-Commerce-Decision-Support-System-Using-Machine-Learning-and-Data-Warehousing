@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchWatchlist } from '../services/api';
 import PageContainer from '../components/Layout/PageContainer';
 import WatchlistCard from '../components/Watchlist/WatchlistCard';
@@ -6,6 +7,7 @@ import EmptyState from '../components/common/EmptyState';
 import './WatchlistPage.css';
 
 export default function WatchlistPage() {
+  const navigate = useNavigate();
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +32,13 @@ export default function WatchlistPage() {
         <div className="watchlist-header">
           <h1>Watchlist</h1>
           <p className="subtitle">Products you're keeping an eye on.</p>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => navigate('/preferences', { state: { returnTo: '/watchlist' } })}
+          >
+            Edit preferences
+          </button>
         </div>
 
         {watchlist.length > 0 ? (

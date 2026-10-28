@@ -61,7 +61,7 @@ class ScraperAPIProvider(BaseProvider):
             is_optional=False,
         )
 
-        self.timeout_seconds = 15.0
+        self.timeout_seconds = settings.SCRAPERAPI_TIMEOUT_SECONDS
         self.consecutive_quota_errors = 0
 
     def check_health(self) -> ProviderStatus:

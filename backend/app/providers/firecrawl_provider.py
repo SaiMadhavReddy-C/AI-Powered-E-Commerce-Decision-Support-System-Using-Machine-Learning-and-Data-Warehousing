@@ -22,8 +22,6 @@ class FirecrawlProvider(BaseProvider):
         "tatacliq.com", "myntra.com", "ajio.com", "meesho.com", "jiomart.com", "nykaa.com",
     ]
     API_URL = "https://api.firecrawl.dev/v2/scrape"
-    TIMEOUT_SECONDS = 20.0
-
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = (api_key or settings.FIRECRAWL_API_KEY).strip()
         super().__init__(
@@ -33,6 +31,7 @@ class FirecrawlProvider(BaseProvider):
             status=ProviderStatus.LIVE if self.api_key else ProviderStatus.UNAVAILABLE,
             is_optional=False,
         )
+        self.timeout_seconds = settings.FIRECRAWL_TIMEOUT_SECONDS
 
     def can_handle_url(self, url: str) -> bool:
         try:
@@ -113,7 +112,7 @@ class FirecrawlProvider(BaseProvider):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self.TIMEOUT_SECONDS) as response:
+            with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
                 body = json.loads(response.read().decode("utf-8"))
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as error:
             logger.warning(f"Firecrawl extraction failed for {url}: {error}")
@@ -198,7 +197,7 @@ class FirecrawlProvider(BaseProvider):
                 method="POST",
             )
             try:
-                with urllib.request.urlopen(request, timeout=self.TIMEOUT_SECONDS) as response:
+                with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
                     body = json.loads(response.read().decode("utf-8"))
             except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as error:
                 logger.warning(f"Firecrawl search failed for {domain}: {error}")

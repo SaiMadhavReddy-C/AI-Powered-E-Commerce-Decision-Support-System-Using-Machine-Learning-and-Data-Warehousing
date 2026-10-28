@@ -120,7 +120,7 @@ class ProviderRegistry:
         if self.firecrawl_provider.status == ProviderStatus.LIVE:
             try:
                 live_offer = self.firecrawl_provider.fetch_and_extract(url)
-                if live_offer:
+                if live_offer and self._is_product_offer(live_offer):
                     return live_offer
                 logger.info(f"Firecrawl returned no verified offer for {url}; trying ScraperAPI.")
             except Exception as error:
@@ -129,7 +129,7 @@ class ProviderRegistry:
         if self.scraperapi_provider.status == ProviderStatus.LIVE:
             try:
                 live_offer = self.scraperapi_provider.fetch_and_extract(url)
-                if live_offer:
+                if live_offer and self._is_product_offer(live_offer):
                     return live_offer
                 logger.info(f"Live fetch returned empty/invalid data for {url}; cascading to MockProvider fallback.")
             except Exception as e:
@@ -137,6 +137,14 @@ class ProviderRegistry:
 
         # Fallback to MockProvider
         return self._fetch_from_mock(url, reason="LIVE_UNAVAILABLE_OR_FALLBACK")
+
+    @staticmethod
+    def _is_product_offer(offer: ProviderOffer) -> bool:
+        """Reject category/search pages that expose a plausible but unrelated price."""
+        title = (offer.product_title or "").lower()
+        return not any(marker in title for marker in (
+            "search results", "results for", "deals under", "shop by category",
+        ))
 
     def _fetch_from_mock(self, url: str, reason: str = "FALLBACK") -> ProviderOffer:
         """Resolves offer from MockProvider with fallback telemetry."""

@@ -68,6 +68,14 @@ class FirecrawlProvider(BaseProvider):
         retailer = host.lower().removeprefix("www.").split(".")[0]
         return retailer, retailer.replace("-", " ").title()
 
+    @staticmethod
+    def _is_product_page(title: str) -> bool:
+        """Reject search/category titles that can contain an unrelated price."""
+        lowered = title.lower()
+        return not any(marker in lowered for marker in (
+            "search results", "results for", "deals under", "shop by category",
+        ))
+
     def fetch_and_extract(self, url: str) -> Optional[ProviderOffer]:
         if not self.api_key or not self.can_handle_url(url):
             return None
@@ -123,7 +131,8 @@ class FirecrawlProvider(BaseProvider):
 
         price = self._price(extracted.get("price"))
         title = str(extracted.get("title") or "").strip()
-        if not title or price is None:
+        if not title or price is None or not self._is_product_page(title):
+            logger.info(f"Firecrawl returned a non-product page for {url}; rejecting offer")
             return None
 
         retailer, retailer_name = self._retailer(url)

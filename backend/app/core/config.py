@@ -68,7 +68,11 @@ class SecuritySettings:
         self.SSRF_TIMEOUT_SECONDS: float = float(os.getenv("SSRF_TIMEOUT_SECONDS", "5.0"))
 
         # Third-party data provider keys
+        self.FIRECRAWL_API_KEY: str = os.getenv("FIRECRAWL_API_KEY", "")
         self.SCRAPERAPI_KEY: str = os.getenv("SCRAPERAPI_KEY", "")
+        self.LIVE_PRICE_CACHE_TTL_SECONDS: int = int(
+            os.getenv("LIVE_PRICE_CACHE_TTL_SECONDS", "900")
+        )
 
         # API keys and secrets
         self.GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")

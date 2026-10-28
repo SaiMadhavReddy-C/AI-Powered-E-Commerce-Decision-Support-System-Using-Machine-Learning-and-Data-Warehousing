@@ -18,6 +18,7 @@ from urllib.parse import urlparse
 from app.providers.base import BaseProvider
 from app.providers.models import ProviderStatus, ProviderOffer
 from app.providers.scraperapi_provider import ScraperAPIProvider
+from app.providers.firecrawl_provider import FirecrawlProvider
 from app.providers.adapters.mock_provider import MockProvider
 from app.providers.adapters.amazon_provider import AmazonProvider
 from app.providers.adapters.flipkart_provider import FlipkartProvider
@@ -42,7 +43,9 @@ class ProviderRegistry:
         self.mock_provider = MockProvider()
         self.register(self.mock_provider)
 
-        # 2. Initialize ScraperAPI Provider (Live gateway)
+        # 2. Initialize live gateways. Firecrawl is the preferred structured extractor.
+        self.firecrawl_provider = FirecrawlProvider()
+        self.register(self.firecrawl_provider)
         self.scraperapi_provider = ScraperAPIProvider()
         self.register(self.scraperapi_provider)
 
@@ -61,7 +64,8 @@ class ProviderRegistry:
 
         logger.info(
             f"ProviderRegistry initialized with {len(self._providers)} providers. "
-            f"ScraperAPI status: {self.scraperapi_provider.status.value}"
+            f"Firecrawl: {self.firecrawl_provider.status.value}; "
+            f"ScraperAPI: {self.scraperapi_provider.status.value}"
         )
 
     def register(self, provider: BaseProvider) -> None:
@@ -88,7 +92,9 @@ class ProviderRegistry:
 
             for domain, retailer_id in self._domain_to_retailer.items():
                 if hostname == domain or hostname.endswith(f".{domain}"):
-                    # If ScraperAPI is active and live, use it
+                    if self.firecrawl_provider.status == ProviderStatus.LIVE:
+                        return self.firecrawl_provider
+                    # ScraperAPI is the secondary live provider.
                     if self.scraperapi_provider.status == ProviderStatus.LIVE:
                         return self.scraperapi_provider
                     # Otherwise return the specific retailer provider
@@ -104,15 +110,22 @@ class ProviderRegistry:
         """
         Main demand-driven fetch execution:
         1. If force_mock is True, immediately returns MockProvider offer.
-        2. If SCRAPERAPI_KEY is present and ScraperAPI is LIVE, attempts live extraction.
-        3. If live extraction encounters an error, 429 quota limit, or blocks,
-           gracefully falls back to MockProvider with adjusted confidence score.
-        4. Amazon failure never halts the process (optional adapter).
+        2. Firecrawl is tried first when configured.
+        3. ScraperAPI is tried only when Firecrawl cannot produce an offer.
+        4. If both providers fail, return MockProvider for legacy callers.
         """
         if force_mock:
             return self._fetch_from_mock(url, reason="FORCE_MOCK")
 
-        # Check if live extraction is feasible
+        if self.firecrawl_provider.status == ProviderStatus.LIVE:
+            try:
+                live_offer = self.firecrawl_provider.fetch_and_extract(url)
+                if live_offer:
+                    return live_offer
+                logger.info(f"Firecrawl returned no verified offer for {url}; trying ScraperAPI.")
+            except Exception as error:
+                logger.warning(f"Firecrawl exception on {url}: {error}; trying ScraperAPI.")
+
         if self.scraperapi_provider.status == ProviderStatus.LIVE:
             try:
                 live_offer = self.scraperapi_provider.fetch_and_extract(url)

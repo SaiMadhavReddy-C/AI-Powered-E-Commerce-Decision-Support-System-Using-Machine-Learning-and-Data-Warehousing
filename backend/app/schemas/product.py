@@ -88,6 +88,7 @@ class ProductDetailSchema(BaseModel):
     historical_low: Optional[float] = Field(default=None, alias="historicalLow")
     historical_high: Optional[float] = Field(default=None, alias="historicalHigh")
     last_checked: Optional[str] = Field(default=None, alias="lastChecked")
+    data_status: str = Field(default="LIVE", alias="dataStatus")
     price_history: List[PriceHistoryPointSchema] = Field(default_factory=list, alias="priceHistory")
     competitors: List[CompetitorOfferSchema] = Field(default_factory=list)
     best_offer: Optional[BestOfferSchema] = Field(default=None, alias="bestOffer")

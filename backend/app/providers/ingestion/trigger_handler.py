@@ -5,7 +5,7 @@ Processes on-demand data acquisition triggers:
 2. URL Check Trigger (user paste URL or product check)
 3. Watchlist Update Trigger (scheduled or user-driven refresh for watched items)
 
-Applies caching, SSRF allowlist protection, and seamless fallback to MockProvider.
+Applies caching and SSRF allowlist protection without fabricating offers.
 """
 
 import time
@@ -29,6 +29,18 @@ class IngestionCacheEntry:
     def is_expired(self) -> bool:
         return time.time() > self.expires_at
 
+    def as_cached_offer(self, stale: bool) -> ProviderOffer:
+        """Return a copy so cache metadata never mutates the observation."""
+        offer = self.offer.copy(deep=True)
+        offer.raw_metadata = {
+            **offer.raw_metadata,
+            "original_source_type": offer.source_type,
+            "cache_state": "STALE" if stale else "FRESH",
+        }
+        offer.source_type = "CACHE"
+        offer.source_status = "STALE" if stale else "CACHED"
+        return offer
+
 
 class DemandDrivenTriggerHandler:
     """
@@ -36,9 +48,9 @@ class DemandDrivenTriggerHandler:
     or system watchers. Prevents background crawling while guaranteeing fresh data.
     """
 
-    def __init__(self, cache_ttl_seconds: float = 300.0):
+    def __init__(self, cache_ttl_seconds: Optional[float] = None):
         self._cache: Dict[str, IngestionCacheEntry] = {}
-        self.cache_ttl_seconds = cache_ttl_seconds
+        self.cache_ttl_seconds = cache_ttl_seconds or settings.LIVE_PRICE_CACHE_TTL_SECONDS
 
     def handle_user_search_trigger(self, query: str, limit: int = 20) -> List[ProviderOffer]:
         """
@@ -63,7 +75,7 @@ class DemandDrivenTriggerHandler:
         # Standard keyword query
         return provider_registry.search(clean_query, limit=limit)
 
-    def handle_url_check_trigger(self, url: str, force_refresh: bool = False) -> ProviderOffer:
+    def handle_url_check_trigger(self, url: str, force_refresh: bool = False) -> Optional[ProviderOffer]:
         """
         Trigger 2: URL Check Trigger.
         Processes user-pasted product URLs.
@@ -71,21 +83,26 @@ class DemandDrivenTriggerHandler:
         """
         clean_url = url.strip()
 
-        # Check in-memory observation cache
-        if not force_refresh and clean_url in self._cache:
-            entry = self._cache[clean_url]
+        entry = self._cache.get(clean_url)
+        if entry and not force_refresh:
             if not entry.is_expired():
                 logger.info(f"Serving cached observation for URL: {clean_url}")
-                return entry.offer
+                return entry.as_cached_offer(stale=False)
 
         # Execute demand-driven fetch via ProviderRegistry
         offer = provider_registry.fetch_offer(clean_url)
 
-        # Store in cache
-        if offer:
+        # Only real provider observations are safe to cache. Mock data is never reused.
+        if offer and offer.source_type != "MOCK":
             self._cache[clean_url] = IngestionCacheEntry(offer, ttl_seconds=self.cache_ttl_seconds)
+            return offer
 
-        return offer
+        # When live retrieval fails, retain the last verified observation.
+        if entry:
+            logger.info(f"Live fetch unavailable; serving stale verified cache for URL: {clean_url}")
+            return entry.as_cached_offer(stale=True)
+
+        return None
 
     def handle_watchlist_update_trigger(
         self,

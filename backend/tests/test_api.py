@@ -1,6 +1,7 @@
 import sys
 import os
 import unittest
+from unittest.mock import patch
 
 # Ensure backend root is on sys.path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,23 +83,19 @@ class TestShopQBackend(unittest.TestCase):
         self.assertEqual(d.model_version, settings.MODEL_VERSION)
         self.assertEqual(d.decision_rules_version, settings.DECISION_RULES_VERSION)
 
-    def test_url_resolution(self):
-        """Verifies URL extraction and routing heuristics."""
-        p_amazon = product_service.resolve_by_url("https://amazon.in/dp/sony-wh1000xm5-black")
-        self.assertEqual(p_amazon.id, "sony_good_deal")
+    @patch("app.services.product_service.trigger_handler.handle_url_check_trigger", return_value=None)
+    def test_url_resolution_never_substitutes_demo_data(self, _mock_fetch):
+        """An unavailable live lookup must not resolve to a seeded demo product."""
+        self.assertIsNone(product_service.resolve_by_url("https://amazon.in/dp/sony-wh1000xm5-black"))
 
-        p_myntra = product_service.resolve_by_url("https://myntra.com/shoes/nike-air-max-90")
-        self.assertEqual(p_myntra.id, "nike_better_alternative")
-
-    def test_search_service(self):
-        """Verifies query search and URL fallback search."""
+    @patch("app.services.product_service.trigger_handler.handle_url_check_trigger", return_value=None)
+    def test_search_service(self, _mock_fetch):
+        """Verifies keyword searches do not present sample data as live prices."""
         res_text = search_service.search("iphone")
-        self.assertTrue(res_text.total >= 1)
-        self.assertEqual(res_text.results[0].id, "iphone_wait")
+        self.assertEqual(res_text.total, 0)
 
         res_url = search_service.search("https://croma.com/canon-eos-r50")
-        self.assertTrue(res_url.total >= 1)
-        self.assertEqual(res_url.results[0].id, "new_product_no_history")
+        self.assertEqual(res_url.total, 0)
 
     def test_watchlist_service(self):
         """Verifies watchlist CRUD operations."""
@@ -160,7 +157,7 @@ class TestShopQBackend(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         data = res.json()
         self.assertTrue("results" in data)
-        self.assertTrue(len(data["results"]) > 0)
+        self.assertEqual(len(data["results"]), 0)
 
         # 3. GET /api/products/{id} (Strict Contract)
         res = self.client.get("/api/products/sony_good_deal")
@@ -181,12 +178,10 @@ class TestShopQBackend(unittest.TestCase):
         self.assertIn("model_version", d)
         self.assertIn("decision_rules_version", d)
 
-        # 4. POST /api/analyze (Strict Contract)
-        res = self.client.post("/api/analyze", json={"url": "https://amazon.in/product/sony"})
-        self.assertEqual(res.status_code, 200)
-        data = res.json()
-        self.assertIn("product", data)
-        self.assertIn("decision", data)
+        # 4. POST /api/analyze returns an honest failure without a verified offer.
+        with patch("app.services.product_service.trigger_handler.handle_url_check_trigger", return_value=None):
+            res = self.client.post("/api/analyze", json={"url": "https://amazon.in/product/sony"})
+        self.assertEqual(res.status_code, 404)
 
         # 5. GET /api/products/{id}/analysis
         res = self.client.get("/api/products/sony_good_deal/analysis")

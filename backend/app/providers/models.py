@@ -139,6 +139,7 @@ class ProviderOffer(BaseModel):
         reasons: Optional[List[str]] = None,
         buy_point: Optional[float] = None,
         trend: str = "STABLE",
+        data_status: str = "LIVE",
         price_history: Optional[List[PriceHistoryPointSchema]] = None,
         competitors: Optional[List[CompetitorOfferSchema]] = None,
     ) -> ProductDetailSchema:
@@ -215,6 +216,7 @@ class ProviderOffer(BaseModel):
             historicalLow=self.original_price or self.price,
             historicalHigh=self.original_price or self.price,
             lastChecked=self.collected_at,
+            dataStatus=data_status,
             priceHistory=price_history or [],
             competitors=competitors or [],
             bestOffer=self.to_best_offer(),

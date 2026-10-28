@@ -61,12 +61,12 @@ export default function HomePage() {
           <p className="editorial-subtitle">I'll check before you decide.</p>
           
           <div className="search-wrapper">
-            <SearchBar onSubmit={handleSearch} placeholder="Paste a product link or search a product" />
+            <SearchBar onSubmit={handleSearch} placeholder="Paste a retailer product link" />
           </div>
 
           {isFirstSession && (
             <div className="first-use-helper">
-              <strong>New to ShopQ?</strong> Give me a product &rarr; I check prices, sellers and recent history &rarr; I tell you what I'd do.
+              <strong>New to ShopQ?</strong> Paste a retailer product link and I’ll verify its current price and seller details.
             </div>
           )}
 

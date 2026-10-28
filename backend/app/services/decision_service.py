@@ -48,10 +48,10 @@ class DecisionService:
             logger.info(f"Catalog miss — escalating to resolve_new_product: '{query[:50]}'")
             product = product_service.resolve_new_product(query)
 
-        # Ultimate fallback — return first seeded demo product
+        # Never substitute a demo product for an unknown or unverified query.
         if not product:
-            logger.warning(f"All resolution paths failed for '{query[:50]}' — using demo fallback")
-            product = product_service.get_all()[0]
+            logger.warning(f"No verified product data available for '{query[:50]}'")
+            return None
 
         decision = self.evaluate_decision(product)
 

@@ -9,7 +9,7 @@ import {
 } from './mockData.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-const ENABLE_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK !== 'false';
+const ENABLE_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK === 'true';
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -51,6 +51,7 @@ export function normalizeProduct(data) {
     historical_high: p.historicalHigh ?? p.historical_high ?? currentPrice * 1.2,
     lastChecked: p.lastChecked || p.last_checked || d.checked_at || 'Recently',
     last_checked: p.lastChecked || p.last_checked || d.checked_at || 'Recently',
+    dataStatus: p.dataStatus || p.data_status || 'LIVE',
     priceHistory: (p.priceHistory || p.price_history || []).map((pt) => ({
       date: pt.date || pt.observed_at,
       observed_at: pt.observed_at || pt.date,

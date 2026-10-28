@@ -18,6 +18,7 @@ from app.providers.models import (
 from app.providers.base import BaseProvider
 from app.providers.registry import ProviderRegistry, provider_registry
 from app.providers.scraperapi_provider import ScraperAPIProvider
+from app.providers.firecrawl_provider import FirecrawlProvider
 from app.providers.adapters import (
     MockProvider,
     AmazonProvider,
@@ -49,6 +50,7 @@ __all__ = [
     "ProviderRegistry",
     "provider_registry",
     "ScraperAPIProvider",
+    "FirecrawlProvider",
     "MockProvider",
     "AmazonProvider",
     "FlipkartProvider",

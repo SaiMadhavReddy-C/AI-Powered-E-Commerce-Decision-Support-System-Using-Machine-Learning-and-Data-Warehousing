@@ -4,6 +4,7 @@ import { fetchSearchResults, analyzeProduct } from '../services/api';
 import PageContainer from '../components/Layout/PageContainer';
 import SearchBar from '../components/Search/SearchBar';
 import SearchResults from '../components/Search/SearchResults';
+import EmptyState from '../components/common/EmptyState';
 
 export default function SearchResultsPage() {
   const navigate = useNavigate();
@@ -66,9 +67,15 @@ export default function SearchResultsPage() {
         <div style={{ marginTop: '32px' }}>
           {isSearching ? (
             <p className="text-secondary" style={{ textAlign: 'center' }}>Searching for "{query}"...</p>
-          ) : (
-            <SearchResults results={completedQuery === query ? results : []} onSelect={(product) => navigate('/analyze/' + product.id)} />
-          )}
+          ) : completedQuery === query && results.length === 0 ? (
+              <EmptyState
+                emoji="🔗"
+                title="Paste a retailer product link"
+                description="ShopQ only shows a price after it verifies the retailer listing. Product-name searches cannot confirm a current price."
+              />
+            ) : (
+              <SearchResults results={completedQuery === query ? results : []} onSelect={(product) => navigate('/analyze/' + product.id)} />
+            )}
         </div>
       </div>
     </PageContainer>

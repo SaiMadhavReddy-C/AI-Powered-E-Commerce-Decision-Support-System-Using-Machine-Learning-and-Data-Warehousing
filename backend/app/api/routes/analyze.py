@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException
 from app.schemas.analyze import AnalyzeRequest
 from app.schemas.product import ProductAnalysisResponse
 from app.services.decision_service import decision_service
@@ -14,4 +14,10 @@ def analyze_product_endpoint(payload: AnalyzeRequest = Body(...)):
     Returns { product, decision, best_offer }
     """
     query = payload.get_query()
-    return decision_service.analyze_product(query)
+    analysis = decision_service.analyze_product(query)
+    if not analysis:
+        raise HTTPException(
+            status_code=404,
+            detail="No verified price found. Paste a supported retailer product link to check its current price.",
+        )
+    return analysis

@@ -304,6 +304,19 @@ export async function removeFromWatchlist(productId) {
   }
 }
 
+export async function sendTestEmail(recipient) {
+  const res = await fetch(`${API_BASE_URL}/api/notifications/test-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipient }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail || `Test email failed (${res.status})`);
+  }
+  return res.json();
+}
+
 export function resolveProductByUrl(url) {
   return normalizeProduct(mockResolveProductByUrl(url));
 }

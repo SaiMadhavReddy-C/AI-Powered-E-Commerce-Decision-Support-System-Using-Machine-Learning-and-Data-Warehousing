@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PageContainer from '../components/Layout/PageContainer';
+import { sendTestEmail } from '../services/api';
 
 const STORAGE_KEY = 'shopq_user_preferences';
 
@@ -38,6 +39,7 @@ export default function PreferencesPage() {
     return DEFAULT_PREFERENCES;
   });
   const [saveStatus, setSaveStatus] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
 
   const handlePriorityChange = (priority) => {
     setPreferences((prev) => ({ ...prev, primaryPriority: priority }));
@@ -86,6 +88,19 @@ export default function PreferencesPage() {
       setTimeout(() => setSaveStatus(''), 3000);
     } catch (e) {
       console.error('Failed to reset preferences:', e);
+    }
+  };
+
+  const handleTestEmail = async () => {
+    if (!preferences.email) return setSaveStatus('Enter an email address first.');
+    setEmailSending(true);
+    try {
+      await sendTestEmail(preferences.email);
+      setSaveStatus('Test email sent successfully.');
+    } catch (error) {
+      setSaveStatus(error.message || 'Email could not be sent.');
+    } finally {
+      setEmailSending(false);
     }
   };
 
@@ -447,6 +462,9 @@ export default function PreferencesPage() {
                     onChange={(e) => setPreferences((p) => ({ ...p, email: e.target.value }))}
                     style={{ fontSize: '14px', padding: '10px 14px' }}
                   />
+                  <button type="button" className="btn btn-secondary" onClick={handleTestEmail} disabled={emailSending || !preferences.email} style={{ marginTop: '10px', fontSize: '13px' }}>
+                    {emailSending ? 'Sending…' : 'Send test email'}
+                  </button>
                 </div>
               )}
             </div>

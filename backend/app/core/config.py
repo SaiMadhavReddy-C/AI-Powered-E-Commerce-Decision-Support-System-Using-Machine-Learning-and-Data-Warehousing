@@ -79,6 +79,8 @@ class SecuritySettings:
 
         # API keys and secrets
         self.GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+        self.GROUNDMAIL_API_KEY: str = os.getenv("GROUNDMAIL_API_KEY", "")
+        self.GROUNDMAIL_FROM_EMAIL: str = os.getenv("GROUNDMAIL_FROM_EMAIL", "")
         self.SECRET_KEY: str = os.getenv(
             "SECRET_KEY", "shopq-dev-secret-key-change-in-production"
         )

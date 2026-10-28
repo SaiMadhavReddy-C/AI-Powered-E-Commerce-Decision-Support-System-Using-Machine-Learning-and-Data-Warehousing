@@ -7,6 +7,7 @@ from app.api.routes.products import router as products_router
 from app.api.routes.watchlist import router as watchlist_router
 from app.api.routes.alerts import router as alerts_router
 from app.api.routes.preferences import router as preferences_router
+from app.api.routes.notifications import router as notifications_router
 
 __all__ = [
     "health_router",
@@ -16,4 +17,5 @@ __all__ = [
     "watchlist_router",
     "alerts_router",
     "preferences_router",
+    "notifications_router",
 ]

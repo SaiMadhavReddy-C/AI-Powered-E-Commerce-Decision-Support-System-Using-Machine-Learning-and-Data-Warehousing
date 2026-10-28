@@ -26,7 +26,10 @@ def add_to_watchlist(payload: WatchlistCreateRequest = Body(...)):
     return watchlist_service.add(
         product_id=payload.product_id,
         target_price=payload.target_price,
-    )
+    ) or _not_found(payload.product_id)
+
+def _not_found(product_id: str):
+    raise HTTPException(status_code=404, detail=f"Product '{product_id}' is not available to watch")
 
 @router.delete("/{id}", response_model=WatchlistDeleteResponse)
 def remove_from_watchlist(id: str = Path(..., description="Product ID to remove from watchlist")):

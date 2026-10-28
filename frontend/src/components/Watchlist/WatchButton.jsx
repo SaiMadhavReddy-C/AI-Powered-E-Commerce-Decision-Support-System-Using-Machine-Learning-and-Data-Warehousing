@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { formatPrice } from '../../utils/formatPrice';
-import { addToWatchlist, removeFromWatchlist } from '../../services/api';
+import { addToWatchlist, fetchWatchlist, removeFromWatchlist } from '../../services/api';
 import './WatchButton.css';
 
 const WatchButton = ({ productId, targetPrice, productName, initialWatching = false }) => {
   const [isWatching, setIsWatching] = useState(initialWatching);
   const [isSaving, setIsSaving] = useState(false);
+
+  React.useEffect(() => {
+    let active = true;
+    if (!productId || initialWatching) return undefined;
+    fetchWatchlist().then((items) => {
+      if (active) setIsWatching(items.some((item) => item.id === productId));
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [productId, initialWatching]);
 
   const toggleWatch = async () => {
     if (isSaving) return;

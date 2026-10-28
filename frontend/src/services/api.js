@@ -280,10 +280,12 @@ export async function addToWatchlist(productId, targetPrice) {
     if (res.ok) {
       return await res.json();
     }
+    const detail = await res.text();
+    throw new Error(detail || `Watchlist add failed (${res.status})`);
   } catch (err) {
     console.warn('Backend POST /api/watchlist failed', err);
+    throw err;
   }
-  return { success: true, productId, targetPrice };
 }
 
 export async function removeFromWatchlist(productId) {
@@ -294,10 +296,12 @@ export async function removeFromWatchlist(productId) {
     if (res.ok) {
       return await res.json();
     }
+    const detail = await res.text();
+    throw new Error(detail || `Watchlist removal failed (${res.status})`);
   } catch (err) {
     console.warn(`Backend DELETE /api/watchlist/${productId} failed`, err);
+    throw err;
   }
-  return { success: true, productId };
 }
 
 export function resolveProductByUrl(url) {

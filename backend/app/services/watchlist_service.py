@@ -2,6 +2,7 @@ import threading
 from typing import List, Optional, Dict
 from app.schemas.watchlist import WatchlistItemSchema, WatchlistStatusSchema
 from app.services.product_service import product_service
+from app.core.config import settings
 
 class WatchlistService:
     """Manages the user watchlist with dynamic status evaluations."""
@@ -12,6 +13,8 @@ class WatchlistService:
         self._init_seed_items()
 
     def _init_seed_items(self):
+        if settings.IS_PRODUCTION:
+            return
         # 1. iPhone 15
         p_iphone = product_service.get_by_id("iphone_wait")
         if p_iphone:
@@ -89,18 +92,22 @@ class WatchlistService:
         with self._lock:
             return list(self._items.values())
 
-    def add(self, product_id: str, target_price: Optional[float] = None) -> WatchlistItemSchema:
+    def add(self, product_id: str, target_price: Optional[float] = None) -> Optional[WatchlistItemSchema]:
         """Adds a product to the watchlist or updates its target price."""
         product = product_service.get_by_id(product_id)
         if not product:
             product = product_service.resolve_by_url(product_id)
+        if not product:
+            return None
+
+        effective_target = target_price if target_price is not None else product.buy_point or (product.current_price * 0.9)
 
         with self._lock:
             item = WatchlistItemSchema(
                 **product.model_dump(by_alias=True),
-                targetPrice=target_price or product.buy_point or (product.current_price * 0.9),
+                targetPrice=effective_target,
                 watchGroup="WATCHING",
-                watchMessage=f"👀 Monitoring {product.name}. Target set to ₹{target_price or product.current_price:,.0f}.",
+                watchMessage=f"👀 Monitoring {product.name}. Target set to ₹{effective_target:,.0f}.",
                 watchStatus=WatchlistStatusSchema(
                     emoji="👀",
                     icon="👀",

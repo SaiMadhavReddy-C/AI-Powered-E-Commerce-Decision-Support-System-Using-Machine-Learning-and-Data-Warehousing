@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '../../utils/formatPrice';
 import { addToWatchlist, fetchWatchlist, removeFromWatchlist } from '../../services/api';
 import './WatchButton.css';
+import { useAuth } from '../../auth/context';
 
 const WatchButton = ({ productId, targetPrice, productName, initialWatching = false }) => {
   const [isWatching, setIsWatching] = useState(initialWatching);
   const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
+  const { session } = useAuth();
 
   React.useEffect(() => {
     let active = true;
@@ -18,6 +22,10 @@ const WatchButton = ({ productId, targetPrice, productName, initialWatching = fa
 
   const toggleWatch = async () => {
     if (isSaving) return;
+    if (!session) {
+      navigate('/login', { state: { returnTo: '/watchlist' } });
+      return;
+    }
     setIsSaving(true);
     try {
       if (isWatching) {

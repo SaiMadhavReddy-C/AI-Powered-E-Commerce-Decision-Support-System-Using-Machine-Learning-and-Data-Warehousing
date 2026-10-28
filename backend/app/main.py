@@ -14,6 +14,7 @@ from app.api.routes import (
     alerts_router,
     preferences_router,
     notifications_router,
+    auth_router,
 )
 
 try:
@@ -68,6 +69,7 @@ def create_application() -> FastAPI:
     app.include_router(alerts_router, prefix=settings.API_PREFIX)
     app.include_router(preferences_router, prefix=settings.API_PREFIX)
     app.include_router(notifications_router, prefix=settings.API_PREFIX)
+    app.include_router(auth_router, prefix=settings.API_PREFIX)
 
     @app.get("/", include_in_schema=False)
     def root():

@@ -343,6 +343,18 @@ export async function subscribeEmailAlerts(recipient) {
   return res.json();
 }
 
+export async function requestLoginOtp(email) {
+  const res = await fetch(`${API_BASE_URL}/api/auth/request-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+  if (!res.ok) throw new Error((await res.text()) || 'Could not send login code');
+  return res.json();
+}
+
+export async function verifyLoginOtp(email, code) {
+  const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code }) });
+  if (!res.ok) throw new Error((await res.text()) || 'Invalid or expired code');
+  return res.json();
+}
+
 export function resolveProductByUrl(url) {
   return normalizeProduct(mockResolveProductByUrl(url));
 }

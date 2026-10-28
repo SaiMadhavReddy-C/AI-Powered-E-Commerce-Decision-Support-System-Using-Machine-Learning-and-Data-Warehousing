@@ -11,8 +11,6 @@ import {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const ENABLE_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK !== 'false';
 
-const SIMULATED_DELAY = 100; // ms
-
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -33,7 +31,7 @@ export function normalizeProduct(data) {
     brand: p.brand || '',
     category: p.category || '',
     variant: p.variant || '',
-    image: p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80',
+    image: p.image || p.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80',
     currentPrice,
     current_price: currentPrice,
     retailer: p.retailer || 'Online Retailer',
@@ -70,8 +68,16 @@ export function normalizeProduct(data) {
       availabilityStatus: pt.availabilityStatus ?? pt.availability_status ?? 'IN_STOCK',
     })),
     competitors: p.competitors || [],
-    bestOffer: bo,
-    best_offer: bo,
+    bestOffer: bo && {
+      ...bo,
+      isReliable: bo.isReliable ?? bo.seller_status === 'RELIABLE',
+      inStock: bo.inStock ?? bo.availability === 'IN_STOCK',
+    },
+    best_offer: bo && {
+      ...bo,
+      isReliable: bo.isReliable ?? bo.seller_status === 'RELIABLE',
+      inStock: bo.inStock ?? bo.availability === 'IN_STOCK',
+    },
     decision: d,
   };
 }

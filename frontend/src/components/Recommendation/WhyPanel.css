@@ -29,10 +29,7 @@
 
 .why-content {
   margin-top: 16px;
-  padding: 20px;
-  background-color: var(--bg);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  padding: 4px 0;
 }
 
 .why-list {

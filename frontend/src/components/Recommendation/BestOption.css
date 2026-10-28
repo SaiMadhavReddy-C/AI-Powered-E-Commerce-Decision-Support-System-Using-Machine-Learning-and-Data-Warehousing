@@ -15,10 +15,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 4px 0;
   margin-bottom: 12px;
 }
 
@@ -50,9 +47,8 @@
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
-  background-color: var(--bg);
   color: var(--text-secondary);
-  border: 1px solid var(--border);
+  padding: 0;
 }
 
 .best-option-savings {

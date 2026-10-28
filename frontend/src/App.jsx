@@ -17,7 +17,7 @@ export default function App() {
     <>
       <Navbar />
       <BottomNav />
-      <main>
+      <div className="app-content">
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/search' element={<SearchResultsPage />} />
@@ -29,7 +29,7 @@ export default function App() {
           <Route path='/how-it-works' element={<HowItWorksPage />} />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
-      </main>
+      </div>
     </>
   );
 }

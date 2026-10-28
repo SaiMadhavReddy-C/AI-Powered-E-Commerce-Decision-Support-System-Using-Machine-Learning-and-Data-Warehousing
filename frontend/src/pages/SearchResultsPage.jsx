@@ -11,27 +11,27 @@ export default function SearchResultsPage() {
   const query = searchParams.get('q') || '';
   
   const [results, setResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [completedQuery, setCompletedQuery] = useState('');
+  const isSearching = Boolean(query) && completedQuery !== query;
 
   useEffect(() => {
     let isMounted = true;
-    if (query) {
-      setIsSearching(true);
-      fetchSearchResults(query)
-        .then((res) => {
-          if (isMounted) {
-            setResults(res || []);
-            setIsSearching(false);
-          }
-        })
-        .catch((err) => {
-          console.error('Search failed', err);
-          if (isMounted) {
-            setResults([]);
-            setIsSearching(false);
-          }
-        });
-    }
+    if (!query) return () => { isMounted = false; };
+
+    fetchSearchResults(query)
+      .then((res) => {
+        if (isMounted) {
+          setResults(res || []);
+          setCompletedQuery(query);
+        }
+      })
+      .catch((err) => {
+        console.error('Search failed', err);
+        if (isMounted) {
+          setResults([]);
+          setCompletedQuery(query);
+        }
+      });
     return () => {
       isMounted = false;
     };
@@ -67,7 +67,7 @@ export default function SearchResultsPage() {
           {isSearching ? (
             <p className="text-secondary" style={{ textAlign: 'center' }}>Searching for "{query}"...</p>
           ) : (
-            <SearchResults results={results} onSelect={(product) => navigate('/analyze/' + product.id)} />
+            <SearchResults results={completedQuery === query ? results : []} onSelect={(product) => navigate('/analyze/' + product.id)} />
           )}
         </div>
       </div>

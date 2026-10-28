@@ -22,7 +22,6 @@ const RecommendationCard = ({ product }) => {
   return (
     <div className={`recommendation-card slide-up ${getTypeClass()}`}>
       <div className="rec-badge-section">
-        <div className="rec-emoji">{recData.emoji}</div>
         <div className="rec-label">{recData.label}</div>
         <div className="rec-timestamp">{formatTimeAgo(product.lastChecked)}</div>
       </div>
@@ -36,7 +35,7 @@ const RecommendationCard = ({ product }) => {
           {recData.category?.toLowerCase() === 'wait' && product.buyPoint && (
             <div className="rec-wait-action">
               <p>I'd reconsider around {formatPrice(product.buyPoint)}.</p>
-              <button className="btn-secondary">Watch until {formatPrice(product.buyPoint)}</button>
+              <span className="rec-watch-hint">Set a price alert below.</span>
             </div>
           )}
           

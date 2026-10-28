@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
 import { formatPrice } from '../../utils/formatPrice';
+import { addToWatchlist, removeFromWatchlist } from '../../services/api';
 import './WatchButton.css';
 
-const WatchButton = ({ targetPrice, productName, initialWatching = false }) => {
+const WatchButton = ({ productId, targetPrice, productName, initialWatching = false }) => {
   const [isWatching, setIsWatching] = useState(initialWatching);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const toggleWatch = () => {
-    setIsWatching(!isWatching);
+  const toggleWatch = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      if (isWatching) {
+        await removeFromWatchlist(productId);
+      } else {
+        await addToWatchlist(productId, targetPrice);
+      }
+      setIsWatching((watching) => !watching);
+    } catch (error) {
+      console.error('Could not update watchlist', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -15,10 +30,11 @@ const WatchButton = ({ targetPrice, productName, initialWatching = false }) => {
         type="button"
         className={`watch-btn ${isWatching ? 'is-watching' : ''}`}
         onClick={toggleWatch}
+        disabled={isSaving || !productId}
         aria-pressed={isWatching}
         aria-label={isWatching ? `Stop watching ${productName || 'product'}` : `Watch ${productName || 'product'}${targetPrice ? ` until ${formatPrice(targetPrice)}` : ''}`}
       >
-        {isWatching ? '✓ Watching' : targetPrice ? `👀 Watch until ${formatPrice(targetPrice)}` : '👀 Watch this'}
+        {isSaving ? 'Saving…' : isWatching ? '✓ Watching' : targetPrice ? `Watch until ${formatPrice(targetPrice)}` : 'Watch this'}
       </button>
       
       {isWatching && (

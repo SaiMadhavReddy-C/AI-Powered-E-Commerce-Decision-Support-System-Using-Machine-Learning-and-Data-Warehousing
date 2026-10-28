@@ -119,7 +119,7 @@ export default function AnalyzePage() {
         )}
 
         <div className="analyze-section analyze-action-section">
-          <WatchButton targetPrice={product.buyPoint} productName={product.name} />
+          <WatchButton productId={product.id} targetPrice={product.buyPoint} productName={product.name} />
         </div>
 
         <hr className="divider" />

@@ -33,9 +33,12 @@ export default function HomePage() {
     setIsFirstSession(false);
 
     const trimmed = query.trim();
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    const input = /^(https?:\/\/|(?:www\.)?(?:amazon\.in|amzn\.in|flipkart\.com|croma\.com|myntra\.com|reliancedigital\.in)\/)/i.test(trimmed)
+      ? (/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`)
+      : trimmed;
+    if (/^https?:\/\//i.test(input)) {
       try {
-        const analysis = await analyzeProduct(trimmed);
+        const analysis = await analyzeProduct(input);
         const product = await analysis.execute(() => {});
         if (product && product.id) {
           navigate(`/analyze/${encodeURIComponent(product.id)}`);
@@ -46,7 +49,7 @@ export default function HomePage() {
       }
     }
 
-    navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+    navigate(`/search?q=${encodeURIComponent(input)}`);
   };
 
   const handleTryExample = () => {

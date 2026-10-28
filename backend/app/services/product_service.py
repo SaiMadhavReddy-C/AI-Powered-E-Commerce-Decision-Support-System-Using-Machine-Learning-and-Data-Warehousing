@@ -924,6 +924,8 @@ class ProductService:
         clean_url = (raw_url or "").strip()
         if not clean_url:
             return None
+        if not re.match(r"^https?://", clean_url, re.IGNORECASE):
+            clean_url = f"https://{clean_url}"
 
         offer = trigger_handler.handle_url_check_trigger(clean_url)
         if not offer:

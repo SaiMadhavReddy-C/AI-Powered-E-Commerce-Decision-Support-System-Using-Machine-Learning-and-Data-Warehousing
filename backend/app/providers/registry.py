@@ -188,8 +188,10 @@ class ProviderRegistry:
             offer = self.fetch_offer(query)
             return [offer] if offer else []
 
-        # Return mock catalog search results
-        return self.mock_provider.search(query, limit=limit)
+        # Product-name search is live-provider-only; never expose mock prices.
+        if self.firecrawl_provider.status == ProviderStatus.LIVE:
+            return self.firecrawl_provider.search(query, limit=limit)
+        return []
 
     def get_by_id(self, product_id: str) -> Optional[ProviderOffer]:
         """Retrieves offer by product ID or scenario slug."""

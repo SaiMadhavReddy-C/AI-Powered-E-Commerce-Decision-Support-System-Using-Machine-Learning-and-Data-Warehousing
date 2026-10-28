@@ -1,5 +1,6 @@
 from app.schemas.search import SearchResponse
 from app.services.product_service import product_service
+from app.providers.registry import provider_registry
 
 class SearchService:
     """Service providing search and product discovery algorithms."""
@@ -24,9 +25,16 @@ class SearchService:
                 results=[resolved] if resolved else [],
             )
 
-        # Product-name searches cannot verify a retailer's current price. Do not
-        # leak demo catalog prices into a result that looks live.
-        return SearchResponse(query=query, total=0, results=[])
+        offers = provider_registry.search(trimmed, limit=limit)
+        products = [
+            offer.to_product_detail(
+                explanation="Price extracted from a verified retailer result.",
+                reasons=["Price was checked on the retailer listing."],
+                confidence="MEDIUM",
+            )
+            for offer in offers
+        ]
+        return SearchResponse(query=query, total=len(products), results=products)
 
 
 search_service = SearchService()

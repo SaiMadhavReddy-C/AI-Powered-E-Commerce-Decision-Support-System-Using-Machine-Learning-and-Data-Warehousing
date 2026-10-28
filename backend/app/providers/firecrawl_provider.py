@@ -176,11 +176,43 @@ class FirecrawlProvider(BaseProvider):
         )
 
     def search(self, query: str, limit: int = 5):
-        """Firecrawl search is intentionally not used until model matching is added."""
-        if not self.can_handle_url(query):
+        """Find retailer pages, then verify each result through product extraction."""
+        if not self.api_key or not query.strip():
             return []
-        offer = self.fetch_and_extract(query)
-        return [offer] if offer else []
+
+        payload = {
+            "query": f"{query} (site:amazon.in OR site:flipkart.com OR site:croma.com)",
+            "limit": min(max(limit, 1), 5),
+            "sources": [{"type": "web"}],
+        }
+        request = urllib.request.Request(
+            "https://api.firecrawl.dev/v2/search",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.TIMEOUT_SECONDS) as response:
+                body = json.loads(response.read().decode("utf-8"))
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as error:
+            logger.warning(f"Firecrawl search failed for '{query[:40]}': {error}")
+            return []
+
+        data = body.get("data", []) if isinstance(body, dict) else []
+        if isinstance(data, dict):
+            data = data.get("web", data.get("results", []))
+        offers = []
+        for result in data[:limit]:
+            url = result.get("url", "") if isinstance(result, dict) else ""
+            if not self.can_handle_url(url):
+                continue
+            offer = self.fetch_and_extract(url)
+            if offer:
+                offers.append(offer)
+        return offers
 
     def get_by_id(self, product_id: str) -> Optional[ProviderOffer]:
         return None

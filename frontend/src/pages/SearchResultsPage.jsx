@@ -70,8 +70,8 @@ export default function SearchResultsPage() {
           ) : completedQuery === query && results.length === 0 ? (
               <EmptyState
                 emoji="🔗"
-                title="Paste a retailer product link"
-                description="ShopQ only shows a price after it verifies the retailer listing. Product-name searches cannot confirm a current price."
+                title="No verified matches"
+                description="Try another product name or paste a direct retailer product link. ShopQ only shows prices it can verify."
               />
             ) : (
               <SearchResults results={completedQuery === query ? results : []} onSelect={(product) => navigate('/analyze/' + product.id)} />

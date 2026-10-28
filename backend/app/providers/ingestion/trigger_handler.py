@@ -84,6 +84,10 @@ class DemandDrivenTriggerHandler:
         clean_url = url.strip()
 
         entry = self._cache.get(clean_url)
+        if entry and not provider_registry._is_product_offer(entry.offer, clean_url):
+            logger.info(f"Discarding cached non-product offer for URL: {clean_url}")
+            self._cache.pop(clean_url, None)
+            entry = None
         if entry and not force_refresh:
             if not entry.is_expired():
                 logger.info(f"Serving cached observation for URL: {clean_url}")

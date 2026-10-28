@@ -32,6 +32,7 @@ function AppRoutes() {
           <Route path='/' element={<HomePage />} />
           <Route path='/search' element={<SearchResultsPage />} />
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<LoginPage mode="signup" />} />
           <Route path='/login/otp' element={<OtpPage />} />
           <Route path='/analyze/:id' element={<AnalyzePage />} />
           <Route path='/analyze/:id/details' element={<DetailsPage />} />

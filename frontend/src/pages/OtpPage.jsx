@@ -8,6 +8,7 @@ export default function OtpPage() {
   const navigate = useNavigate();
   const email = location.state?.email || '';
   const returnTo = location.state?.returnTo || '/watchlist';
+  const mode = location.state?.mode || 'login';
   const [code, setCode] = useState('');
   const [seconds, setSeconds] = useState(600);
   const [resendIn, setResendIn] = useState(30);
@@ -30,7 +31,7 @@ export default function OtpPage() {
   const resend = async () => { if (resendIn) return; try { const result = await requestOtp(email); setSeconds(result.expiresIn); setResendIn(result.resendIn); setError(''); } catch (err) { setError(err.message || 'Could not resend code.'); } };
 
   return <PageContainer><div className="auth-page card">
-    <h1>Enter your code</h1><p className="text-secondary">We sent a 6-digit code to {email}.</p>
+    <h1>{mode === 'signup' ? 'Verify your account' : 'Log in with your code'}</h1><p className="text-secondary">We sent a 6-digit code to {email}.</p>
     <form onSubmit={verify} style={{ marginTop: 24 }}>
       <input className="input" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} placeholder="000000" aria-label="6-digit login code" />
       <p className="text-secondary" style={{ marginTop: 10 }}>Code expires in {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</p>
